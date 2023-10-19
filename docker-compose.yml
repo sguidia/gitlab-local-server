@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  web:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    container_name: gitlab-server
+    hostname: 'gitlab.lan'
+    networks:
+      - gitlab-network
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.lan'
+        registry_external_url 'http://registry.gitlab.lan'
+        gitlab_rails['registry_enabled'] = true
+        gitlab_rails['registry_host'] = 'registry.gitlab.lan'
+        gitlab_rails['initial_root_password'] = 'GDhI2Lfffjl4X+OVIORDmdPJmHk+Y0gXv1prra+sNwU='
+    # environment:
+    #   - GITLAB_OMNIBUS_CONFIG=external_url 'http://gitlab.lan'; registry_external_url 'http://registry.gitlab.lan'; gitlab_rails['registry_enabled'] = true; gitlab_rails['registry_host'] = "registry.gitlab.lan"
+    ports:
+      - '80:80'
+      - '443:443'
+      - '22:22'
+    volumes:
+      - './config:/etc/gitlab'
+      - './logs:/var/log/gitlab'
+      - './data:/var/opt/gitlab'
+    shm_size: '256m'
+
+networks:
+  gitlab-network:
+    external: true
